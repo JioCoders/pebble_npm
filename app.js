@@ -45,21 +45,30 @@ io.on('connection', (socket) => {
     socket.emit('broadcast', connectedUser.size);
     // io.emit('broadcast', connectedUser.size);
 
-    socket.on('disconnect',()=> {
+    socket.on('disconnect',() => {
         console.log('Disconnected-ID-->',socket.id);
         connectedUser.delete(socket.id);
         socket.broadcast.emit('connected-user',connectedUser.size);
     });
 
-    socket.on('message',(data)=>{
-        console.log('Message---->',data);
-        // socket.emit('message-receive',data);
-        // io.emit('connected-user',data);
-        socket.broadcast.emit('message-received',data);
+    client.on("typing", function name(data) {
+        console.log(data);
+        io.emit("typing", data);
+    });
+    socket.on('message',(data) => {
+        console.log('Message---->', data);
+        // socket.emit('message-receive', data);
+        // io.emit('connected-user', data);
+        socket.broadcast.emit('message-received', data);
 
-// socket.emit('request', /* … */); // emit an event to the socket
-// io.emit('broadcast', /* … */); // emit an event to all connected sockets
-// socket.on('reply', () => { /* … */ }); // listen to the event
+        // socket.emit('request', /* … */); // emit an event to the socket
+        // io.emit('broadcast', /* … */); // emit an event to all connected sockets
+        // socket.on('reply', () => { /* … */ }); // listen to the event
+    });
+
+    client.on("error", function (err) {
+        console.log("received error from client:", client.id);
+        console.log(err);
     });
 });
 
